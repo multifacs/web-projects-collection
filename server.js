@@ -1,74 +1,86 @@
-var express = require("express");
-var mongoose = require("mongoose");
-var path = require("path");
+const express = require('express')
+const path = require('path')
+const {
+	openDb,
+	getAll,
+	getOne,
+	saveOrder,
+	saveFeedback,
+	getFeedbacks
+} = require('./database')
 
-function pathToFile(page) {
-  return path.resolve(__dirname, "./views", `${page}.ejs`);
+const pathToFile = (page) => {
+	// eslint-disable-next-line no-undef
+	return path.resolve(__dirname, './views', `${page}.ejs`)
 }
 
-var { Feedback, Order, Pizza } = require("./models");
+// const { Feedback, Order, Pizza } = require('./models')
 
-var server = express();
-server.set("view engine", "ejs");
+const server = express()
+server.set('view engine', 'ejs')
 
-var SERVER_PORT = 3333;
-var connectionString =
-  "mongodb+srv://user:passwordanton@cluster0.cukuz.mongodb.net/AntonPizza?retryWrites=true&w=majority";
+const SERVER_PORT = 3333
 
-mongoose.connect(connectionString, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+let db
+openDb()
+	.then((res) => {
+		db = res
+		console.log('Connected to DB')
 
-server.listen(SERVER_PORT, function (error) {
-  error ? console.log(error) : console.log(`Запущен на ${SERVER_PORT}`);
-});
+		server.listen(SERVER_PORT, error => {
+			error ? console.log(error) : console.log(`Server running on ${SERVER_PORT}`)
+		})
+	})
+	.catch((err) => 
+		console.log('Caught error: ', err)
+	)
 
-server.use(express.urlencoded({ extended: false }));
+server.use(express.urlencoded({ extended: false }))
 
-server.get("/", function (req, res) {
-  Pizza.find().then(function (pizzas) {
-    res.render(pathToFile("index"), { pizzas });
-  });
-});
+server.get('/', async (req, res) => {
+	const pizzas = await getAll(db)
+	console.log(pizzas)
+	res.render(pathToFile('index'), { pizzas })
+})
 
-server.get("/order/:id", function (req, res) {
-  Pizza.findOne({ id: req.params.id }).then(function (pizza) {
-    res.render(pathToFile("order"), { pizza });
-  });
-});
+server.get('/order/:id', async (req, res) => {
+	const id = req.params.id
+	const pizza = await getOne(db, id)
+	res.render(pathToFile('order'), { pizza })
+})
 
-server.post("/order/:id", function (req, res) {
-  var { address, name, phone } = req.body;
-  var order = new Order({ address, name, phone });
-  order.pizza = req.params.id;
-  var temp = req.body;
-  delete temp["address"];
-  delete temp["name"];
-  delete temp["phone"];
-  order.dop = temp;
-  order.save().then(function () {
-    res.redirect("/feedback");
-  });
-});
+server.post('/order/:id', async (req, res) => {
+	const { address, name, tel } = req.body
+	const order = { address, name, phone: tel }
+	order.pizza = req.params.id
+	
+	const temp = req.body
+	delete temp['address']
+	delete temp['name']
+	delete temp['tel']
+	order.dop = temp
+	
+	await saveOrder(db, order).then(() => {
+		res.redirect('/feedback')
+	})
+})
 
-server.get("/feedback", function (req, res) {
-  res.render(pathToFile("feedback"));
-});
+server.get('/feedback', (req, res) => {
+	res.render(pathToFile('feedback'))
+})
 
-server.post("/feedback", function (req, res) {
-  var { name, text } = req.body;
-  var feedback = new Feedback({ name, text });
-  feedback.save().then(function (result) {
-    res.redirect("/");
-  });
-});
+server.post('/feedback', async (req, res) => {
+	const { name, text } = req.body
+	const feedback = { name, text }
 
-server.get("/feedbacks", function (req, res) {
-  Feedback.find().then(function (feedbacks) {
-    res.render(pathToFile("feedbacks"), { feedbacks });
-  });
-});
+	await saveFeedback(db, feedback)
+	res.redirect('/')
+})
 
-server.use(express.static("./"));
-server.use(express.static("pizzas"));
+server.get('/feedbacks', async (req, res) => {
+	const feedbacks = await getFeedbacks(db)
+	res.render(pathToFile('feedbacks'), { feedbacks })
+})
+
+server.use(express.static('./'))
+server.use(express.static('pizzas'))

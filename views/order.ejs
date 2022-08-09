@@ -33,9 +33,14 @@
                     <p>
                         <%= pizza.description %>
                     </p>
-                    <h3 id="cost">
-                        <%= pizza.cost %>
-                    </h3>
+                    <div class="d-flex gap-3">
+                        <h3>
+                            Итоговая стоимость: 
+                        </h3>
+                        <h3 id="cost">
+                            <%= pizza.cost %>
+                        </h3>
+                    </div>
                 </div>
                 <div class="col d-flex flex-column justify-content-center align-items-center">
                     <% for (var [key, value] of Object.entries(pizza.dop)) { %>
@@ -51,33 +56,33 @@
                         </div>
                         <% } %>
                             <label for="address">Адрес</label>
-                            <input type="text" id="address" name="address">
+                            <input type="text" id="address" name="address" required>
                             <label for="name">Имя</label>
-                            <input type="text" id="name" name="name">
+                            <input type="text" id="name" name="name" required>
                             <label for="tel">Телефон</label>
-                            <input type="tel" id="tel" name="tel">
+                            <input type="tel" id="tel" name="tel" required>
                             <input type="submit" class="mt-5" value="Заказать">
                 </div>
             </div>
         </form>
     </div>
     <script>
-        var cost = <%= pizza.cost %>;
-        var dop = <%- JSON.stringify(pizza.dop) %>;
+        const cost = <%= pizza.cost %>
+        const dop = <%- JSON.stringify(pizza.dop) %>
 
-        function changeCost(curr) {
-            var inp = document.getElementById(curr);
+        const changeCost = (curr) => {
+            const inp = document.getElementById(curr);
             if (inp.value < 0) {
                 inp.value = 0;
             } else if (inp.value > 10) {
                 inp.value = 10;
             }
-            var dop_cost = 0;
-            for (var [key, value] of Object.entries(dop)) {
-                var input = document.getElementById(key);
+            let dop_cost = 0;
+            for (const [key, value] of Object.entries(dop)) {
+                const input = document.getElementById(key);
                 dop_cost += value * parseInt(input.value);
             }
-            var total_cost = document.getElementById('cost');
+            const total_cost = document.getElementById('cost');
             total_cost.innerHTML = parseInt(cost + dop_cost);
         }
     </script>
