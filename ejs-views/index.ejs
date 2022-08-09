@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Парикмахерская</title>
+</head>
+
+<body>
+  <header>
+    <h1>Парикмахерская</h1>
+  </header>
+  <div class="services-container">
+    <h1>Услуги:</h1>
+    <ul class="services">
+      <% if (services.length) { %>
+        <% services.forEach(({ name, duration, cost }, idx)=> { %>
+          <li id="<%= idx %>">
+            <h3>
+              <%= name %>
+            </h3>
+            <p>
+              Продолжительность: <%= duration %> минут
+            </p>
+            <p>
+              <%= cost %> рублей
+            </p>
+          </li>
+          <% }) %>
+            <% } %>
+    </ul>
+  </div>
+  <div id="timeTable" class="timetable-container" hidden>
+    <h1>Время:</h1>
+    <ul class="timetable">
+      <% for(let i=openingTime; i < closingTime; i +=10) { %>
+        <li id="<%= i %>">
+          <h3>
+            <%= String(Math.floor(i / 60)).padStart(2, '0') %>:<%= String(i % 60).padStart(2, '0') %>
+          </h3>
+        </li>
+        <% } %>
+    </ul>
+  </div>
+</body>
+<script>
+  const appointments = <%- JSON.stringify(appointments) %>
+  const services = <%- JSON.stringify(services) %>
+  let serviceId = 0
+
+  const openingTime = <%= openingTime %>
+  const closingTime = <%= closingTime %>
+
+  const pickService = (id) => {
+    serviceId = id
+    document.getElementById(id).classList.add('picked')
+
+    for (let i = openingTime; i < closingTime; i += 10) {
+      const elem = document.getElementById(i)
+      elem.classList.remove('taken')
+    }
+
+    appointments.forEach(elem => {
+      for (let i = elem.time; i <= elem.time + services[elem.service].duration + 10; i += 10) {
+        if (i >= openingTime && i <= 710) {
+          const elem = document.getElementById(i)
+          elem.classList.add('taken')
+        }
+      }
+
+      for (let i = elem.time - services[serviceId].duration; i < elem.time; i += 10) {
+        if (i >= openingTime && i <= 710) {
+          const elem = document.getElementById(i)
+          elem.classList.add('taken')
+        }
+      }
+    })
+
+    for (let i = openingTime; i < closingTime; i += 10) {
+      const elem = document.getElementById(i)
+      if (!elem.classList.contains('taken')) {
+        elem.addEventListener('click', e => {
+          console.log(e.target.id)
+          if (e.target !== e.currentTarget) {
+            makeAppointment(parseInt(e.target.parentElement.id))
+          } else {
+            makeAppointment(parseInt(e.target.id))
+          }
+        })
+      }
+    }
+  }
+
+  const timeTable = document.getElementById('timeTable')
+
+  const servicesElem = document.getElementsByClassName('services')[0]
+  console.log(servicesElem.children)
+  servicesElem.childNodes.forEach(element => {
+    if (element.classList) {
+      console.log(element)
+      element.classList.remove('picked')
+    }
+    element.addEventListener('click', e => {
+      servicesElem.childNodes.forEach(element => {
+        if (element.classList) {
+          element.classList.remove('picked')
+        }
+      });
+      if (e.target !== e.currentTarget) {
+        pickService(parseInt(e.target.parentElement.id))
+      } else {
+        pickService(parseInt(e.target.id))
+      }
+      timeTable.hidden = false
+    })
+  });
+
+  const makeAppointment = async (time) => {
+    console.log('making appointment', serviceId, time)
+    await fetch('', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        service: serviceId,
+        time
+      })
+    });
+    location.reload()
+  }
+
+</script>
+<style>
+  body {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  }
+
+  header {
+    background-color: rgb(97, 184, 255);
+  }
+
+  header>h1 {
+    margin: 0;
+    padding: 1em;
+  }
+
+  .services {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+  }
+
+  .timetable {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1em;
+  }
+
+  .services-container, .timetable-container {
+    padding: 1em;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .services li,
+  .timetable li {
+    background-color: rgb(80, 190, 241);
+    color: white;
+    border-radius: 1em;
+    padding: 1em;
+    cursor: pointer;
+  }
+
+  .picked {
+    background-color: rgb(157, 224, 255) !important;
+  }
+
+  .taken {
+    background-color: grey !important;
+    cursor: default !important;
+  }
+</style>
+
+</html>
