@@ -23,21 +23,19 @@
         </div>
     </nav>
     <div class="container mt-5">
-        <div class="row">
+        <div class="row gy-5">
             <% pizzas.forEach(function(element) {%>
-                <div class="col">
-                    <a href="/order/<%= element.id %>" style="text-decoration: none; color: black;" class="d-flex flex-column justify-content-center align-items-center">
-                        <img src="/<%= element.id %>.jpeg" alt="pizza" class="w-75">
-                        <h3>
-                            <%= element.name %>
-                        </h3>
-                        <p>
-                            <%= element.description %>
-                        </p>
-                        <h4>
-                            <%= element.cost %>
-                        </h4>
-                    </a>
+                <div class="col d-flex justify-content-center">
+                    <div class="card text-center" style="width: 18rem;">
+                        <a href="/order/<%= element.id %>" style="text-decoration: none; color: black;" class="d-flex flex-column justify-content-center align-items-center">
+                        <img src="/<%= element.id %>.jpeg" class="card-img-top" alt="<%= element.id %>">
+                        <div class="card-body">
+                          <h4 class="card-title"><%= element.name %></h4>
+                          <p class="card-text"><%= element.description %></p>
+                          <h5 class="card-text"><%= element.cost %> руб.</h5>
+                        </div>
+                        </a>
+                    </div>
                 </div>
 
                 <%}); %>
