@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('./partials/head.ejs') %>
+<body>
+  <%- include('./partials/nav.ejs') %>
+  <div class="feedback">
+    <h1>Feedback:</h1>
+  <ul>
+    <% if (feedbacks.length) { %>
+      <% feedbacks.forEach(({ name, text, createdAt }) => { %>
+        <article>
+          <p><%= text %></p>
+          <div class="info">
+            <span><%= createdAt.toLocaleDateString() %></span>
+            <span><%= name %></span>
+          </div>
+        </article>
+      <% }) %>
+    <% } %>
+  </ul>
+  </div>
+  <script>
+  </script>
+</body>
+</html>

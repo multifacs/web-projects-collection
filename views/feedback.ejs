@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('./partials/head.ejs') %>
+<body>
+  <%- include('./partials/nav.ejs') %>
+  <form class="feedback_form" method="post">
+    <div class="form-info">
+      <label>Your name
+        <input type="text" name="name" required>
+      </label>
+    </div>
+    <div class="form-text">
+      <label>Your feedback
+        <textarea name="text" required></textarea>
+      </label>
+    </div>
+    <div class="form-button">
+      <input type="submit" value="Submit">
+    </div>
+  </form>
+</body>
+</html>

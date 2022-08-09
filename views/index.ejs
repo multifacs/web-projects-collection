@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('./partials/head.ejs') %>
+
+  <body>
+    <%- include('./partials/nav.ejs') %>
+      <div class="wrapper">
+        <h3 class="headline">Pizzas:</h3>
+        <ul>
+          <% if (pizzas.length) { %>
+            <% pizzas.forEach(({ id, name, ingredients, price })=> { %>
+              <div class="pizza">
+                <h3>
+                  <a href="/pizza/<%= id %>">
+                    <%= name %>
+                  </a>
+                </h3>
+                <p class="ingredients">
+                  <%= ingredients %>
+                </p>
+                <div class="info">
+                  <a href="/pizza/<%= id %>">
+                    <img src="/<%= id %>.jpeg">
+                  </a>
+                </div>
+                <p class="price">
+                  Price: <%= price %>
+                </p>
+              </div>
+              <% }) %>
+                <% } %>
+        </ul>
+      </div>
+  </body>
+
+</html>

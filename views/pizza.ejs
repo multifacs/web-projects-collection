@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('./partials/head.ejs') %>
+
+  <body>
+    <%- include('./partials/nav.ejs') %>
+      <div class="page">
+        <div>
+          <h3>
+            <%= pizza.name %>
+          </h3>
+          <p>
+            <%= pizza.ingredients %>
+          </p>
+          <div class="info">
+            <img src="/<%= pizza.id %>.jpeg" />
+          </div>
+          <p>Total price:</p>
+          <p id="total">
+            <%= pizza.price %>
+          </p>
+        </div>
+        <div>
+          <form action="" method="post">
+            <ul>
+              <% for (const [key, value] of Object.entries(pizza.additional)) { %>
+                <li>
+                  <p>
+                    <%= key %>
+                  </p>
+                  <div class="number">
+                    <span class="minus" onclick="decrease('<%= key %>')">-</span>
+                    <input class="counter_input" id="<%= key %>" name="<%= key %>" type="text" value="0" />
+                    <span class="plus" onclick="increase('<%= key %>')">+</span>
+                  </div>
+                </li>
+                <% } %>
+            </ul>
+            <p>Adress</p>
+            <input type="text" name="adress" required/>
+            <p>Name</p>
+            <input type="text" name="name" required/>
+            <p>Phone</p>
+            <input type="tel" name="phone" required/>
+            <input type="submit" value="Order">
+          </form>
+        </div>
+      </div>
+
+      <script type='text/javascript'>
+        let total = parseInt('<%- pizza.price %>')
+        const total_price = document.getElementById('total')
+
+        const additional = <%- JSON.stringify(pizza.additional) %>
+        console.log(additional)
+
+        const decrease = (key) => {
+          const input = document.getElementById(key);
+          let count = parseInt(input.value) - 1;
+          total = count < 0 ? total : total - parseInt(additional[key])
+          count = count < 0 ? 0 : count;
+          input.value = count;
+
+          total_price.innerHTML = total
+          return false;
+        }
+
+        const increase = (key, value) => {
+          const input = document.getElementById(key);
+          let count = parseInt(input.value) + 1;
+          total = count > 10 ? total : total + parseInt(additional[key])
+          count = count > 10 ? 10 : count;
+          input.value = count;
+          total_price.innerHTML = total
+          return false;
+        }
+      </script>
+  </body>
+
+</html>

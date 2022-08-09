@@ -1,0 +1,290 @@
+body {
+  padding-top: 80px;
+  min-height: calc(100vh - 97px);
+  font-family: "Montserrat", sans-serif;
+  font-size: 20px;
+  background: #fff;
+  color: rgb(54, 54, 54);
+}
+
+h1 {
+  text-transform: uppercase;
+}
+
+nav {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  min-height: 50px;
+  display: flex;
+  justify-content: flex-end;
+  background-color: rgba(230, 122, 0, 0.904);
+}
+
+nav ul {
+  margin: 0;
+  display: flex;
+}
+
+nav a {
+  min-height: 60px;
+  display: block;
+  padding: 10px 20px;
+  line-height: 60px;
+}
+
+li {
+  list-style: none;
+}
+
+.wrapper {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.wrapper ul {
+  display: grid;
+  width: 80%;
+  margin: 0 auto;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  padding: 0;
+}
+
+@media (max-width: 1500px) {
+  .wrapper ul {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+}
+
+@media (max-width: 1200px) {
+  .wrapper ul {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .wrapper ul {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .wrapper ul {
+    grid-template-columns: 1fr;
+  }
+}
+
+ul img {
+  width: 20vh;
+}
+
+a {
+  text-decoration: none;
+  color: rgb(61, 61, 61);
+}
+
+.price {
+  font-size: 18px;
+}
+
+.ingredients {
+  font-size: 12px;
+}
+
+h3 {
+  margin: 0 0;
+}
+
+.headline {
+  margin: 10px 10px;
+}
+
+.pizza {
+  height: 10%;
+  background-color: #fff;
+  padding: 0px 20px;
+  border-radius: 3px;
+  margin-bottom: 5px;
+  position: relative;
+}
+
+.page {
+  width: 80%;
+  margin: 100px auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 1000px) {
+  .page {
+    grid-template-columns: 1fr;
+  }
+}
+
+.info {
+  display: flex;
+  justify-content: center;
+}
+
+.post .info {
+  justify-content: flex-start;
+  gap: 50px;
+}
+
+h2 a {
+  color: rgb(56, 56, 56);
+}
+
+form {
+  background-color: rgba(219, 219, 219, 0.4);
+  padding: 10px 20px;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+}
+
+form div {
+  margin-bottom: 20px;
+  display: flex;
+}
+
+form div label {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.form-info {
+  justify-content: space-between;
+  gap: 20px;
+}
+
+input,
+textarea {
+  min-height: 30px;
+  border: 1px solid #000;
+  background-color: rgba(255, 255, 255, 0.74);
+  color: rgb(56, 56, 56);
+  font-size: 18px;
+  padding: 3px 5px;
+  outline: none;
+}
+
+textarea {
+  resize: none;
+  min-height: 150px;
+}
+
+.form-button {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.form-button input {
+  text-transform: uppercase;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.form-button input:hover {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.home,
+.error {
+  display: flex;
+  min-height: calc(100vh - 90px);
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-family: "Montserrat", sans-serif;
+  font-size: 20px;
+  background: #fff;
+  color: rgb(37, 37, 37);
+  padding-top: 0;
+}
+
+.error h1 {
+  margin-top: 0;
+}
+
+.contacts li {
+  list-style-type: circle;
+  padding-left: 20px;
+  list-style-position: inside;
+}
+
+.error-code {
+  text-transform: uppercase;
+  font-size: 160px;
+  margin-bottom: 20px;
+}
+
+.btn-edit,
+.btn-delete {
+  position: absolute;
+  top: 10px;
+  text-transform: uppercase;
+  padding: 10px 15px;
+  cursor: pointer;
+  border: 1px solid #000;
+  background-color: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  width: 48px;
+  border-radius: 3px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.btn-edit,
+.btn-delete:hover {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.btn-edit {
+  right: 65px;
+}
+
+.btn-delete {
+  right: 10px;
+}
+
+span {cursor:pointer; }
+.number{
+}
+.minus, .plus{
+  width:20px;
+  height:20px;
+  background:#f2f2f2;
+  border-radius:4px;
+  padding:8px 5px 8px 5px;
+  border:1px solid #ddd;
+  display: inline-block;
+  vertical-align: middle;
+  text-align: center;
+}
+.counter_input {
+  height:34px;
+  width: 100px;
+  text-align: center;
+  font-size: 26px;
+  border:1px solid #ddd;
+  border-radius:4px;
+  display: inline-block;
+  vertical-align: middle;
+}
+.feedback {
+  width: 80%;
+  margin: 0 auto;
+}
+.feedback article {
+  border: 2px solid rgba(164,101,26,0.33);
+  padding: 10px;
+  margin-bottom: 20px;
+}
+.feedback_form {
+  width: 80%;
+  margin: 100px auto;
+}
