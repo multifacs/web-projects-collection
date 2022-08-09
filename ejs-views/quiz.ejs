@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>Викторина</h1>
+  <form method="post">
+    <div>
+      <label for="user">Ваше имя: </label>
+      <input type="text" name="user" id="user" required>
+    </div>
+    <ul>
+      <% if (questions.length) { %> <!-- если массив вопросов не пустой -->
+        <% questions.forEach(({ question, answers })=> { %> <!-- проходим по нему -->
+          <li>
+            <h3>
+              <%= question %> <!-- и отрисовываем столько вопросов сколько нужно -->
+            </h3>
+            <ul>
+              <% answers.forEach(({ answer }, idx)=> { %> <!-- так же проходим по ответам -->
+                <li>
+                  <input type="radio" id="<%= question + '_' + idx %>" name="<%= question %>" value="<%= answer %>"
+                    required> <!-- дял каждого ответа задаем нужные id и тд -->
+                  <label for="<%= question + '_' + idx %>">
+                    <%= answer %>
+                  </label>
+                </li>
+                <% }) %>
+            </ul>
+          </li>
+          <% }) %>
+            <% } %>
+    </ul>
+    <input type="submit" value="Отправить">
+  </form>
+</body>
+<style>
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+</style>
+
+</html>

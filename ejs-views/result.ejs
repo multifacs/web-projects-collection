@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <% if (passed) { %> <!-- в зависимости от значения переменной отображаем победил или проиграл -->
+    <h2>Поздравляем, <%= user %>!</h2>
+  <% } else { %>
+    <h2>Сожалеем, <%= user %>!</h2>
+  <% } %>
+    <ul>
+      <% if (answers.length) { %>
+        <% answers.forEach(({ question, choice, correct }) => { %> <!-- так же в цикле отрисовываем ответы -->
+          <li>
+            <p><%= question %> </p>
+            <ul>
+              <li>
+                Ваш выбор: <%= choice %>
+              </li>
+              <li>
+                Правильный ответ: <%= correct %> 
+              </li>
+            </ul>
+            <% if (correct === choice) { %>
+              <p style="color: green">Правильно!</p>
+            <% } else { %>
+              <p style="color: red">Неправильно!</p>
+            <% } %>
+          </li>
+        <% }) %>
+      <% } %>
+    </ul>
+    <a href="/">
+      <button>
+        Домой
+      </button>
+    </a>
+</body>
+<style>
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+</style>
+</html>
