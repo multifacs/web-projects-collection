@@ -24,4 +24,12 @@ server.listen(SERVER_PORT, error => {
 })
 
 server.use(routes)
+
+const closeDB = async (req, res, next) => {
+	await req.db.closeDB()
+	next()
+}
+
+server.use(closeDB)
+
 server.use(express.static('./static/images'))

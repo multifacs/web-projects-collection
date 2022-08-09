@@ -7,14 +7,14 @@ const pathToFile = (page) => {
 const router = express.Router()
 
 router.get('/', async (req, res) => {
-	const pizzas = await req.db.getAll();
-	console.log(pizzas)
+	const pizzas = await req.db.getAll()
+	// console.log(pizzas)
 	res.render(pathToFile('index'), { pizzas })
 })
 
 router.get('/order/:id', async (req, res) => {
 	const id = req.params.id
-	const pizza = req.db.getOne(id)
+	const pizza = await req.db.getOne(id)
 	res.render(pathToFile('order'), { pizza })
 })
 
@@ -29,9 +29,8 @@ router.post('/order/:id', async (req, res) => {
 	delete temp['tel']
 	order.dop = temp
 	
-	await req.db.saveOrder(order).then(() => {
-		res.redirect('/feedback')
-	})
+	await req.db.saveOrder(order)
+	res.redirect('/feedback')
 })
 
 router.get('/feedback', (req, res) => {
