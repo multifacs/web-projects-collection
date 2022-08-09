@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Морской бой</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1></h1>
+        </div>
+        <div class="board">
+            <div class="player-grid"></div>
+            <div class="enemy-grid"></div>
+        </div>
+
+        <div class="control">
+            <button>
+                Rotate
+            </button>
+        </div>
+
+        <div class="ship-grid">
+            <div data-ship class="ship1">
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+            </div>
+
+            <div data-ship class="ship2">
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+            </div>
+
+            <div data-ship class="ship3">
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+            </div>
+
+            <div data-ship class="ship4">
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+            </div>
+
+            <div data-ship class="ship5">
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+    const socket = io();
+
+    let player = 0
+    const header = document.querySelector('.header > h1')
+
+    // Get room and users
+    socket.on('playerName', playerName => {
+        console.log(playerName)
+        if (playerName) {
+            player = playerName
+            header.innerHTML = `Вы игрок №${playerName}`
+        } else {
+            header.innerHTML = 'Мест нет'
+        }
+    });
+
+    const playerGrid = document.querySelector('.player-grid')
+    const enemyGrid = document.querySelector('.enemy-grid')
+    const shipGrid = document.querySelector('.ship-grid')
+
+    const button = document.querySelector('.control > button')
+
+    for (let i = 0; i < 100; i++) {
+        let div = document.createElement('div')
+        div.classList.add('cell')
+        div.id = i
+        // div.innerHTML = i
+        playerGrid.appendChild(div)
+
+        div = document.createElement('div')
+        div.classList.add('cell')
+        div.id = 'enemy_' + i
+        enemyGrid.appendChild(div)
+    }
+
+    const ships = {
+        ship1: 3,
+        ship2: 3,
+        ship3: 4,
+        ship4: 4,
+        ship5: 5,
+    }
+
+    const colors = {
+        ship1: '#A4C5C6',
+        ship2: '#FFE0AC',
+        ship3: '#FFACB7',
+        ship4: '#6886C5',
+        ship5: '#D4EBD0',
+    }
+
+    let selectedShip = {}
+    let direction = 0
+
+    let readyShips = 0
+
+    const changeDirection = (e) => {
+        direction = !direction
+        document.querySelectorAll('[data-ship]').forEach(elem => {
+            elem.classList.toggle('rotated')
+        })
+        console.log(direction)
+    }
+
+    button.addEventListener('click', changeDirection)
+
+    const ship = document.querySelectorAll('[data-ship]')
+    ship.forEach(elem => {
+        elem.addEventListener('click', (e) => {
+            const shipId = e.target.parentElement.classList[0]
+            const currentDirection = direction
+
+            selectedShip = { shipId, currentDirection }
+            console.log(selectedShip)
+
+            ship.forEach(elem => {
+                elem.classList.remove('glow')
+            })
+
+            elem.classList.add('glow')
+        })
+    })
+    console.log(ship)
+
+    const gridCells = document.querySelectorAll('.player-grid .cell')
+    gridCells.forEach(elem => {
+        elem.addEventListener('click', (e) => {
+
+            const checkBorder = () => {
+                if (!direction) {
+                    return parseInt(e.target.id) + (ships[selectedShip.shipId] - 1) * 10 < 100
+                } else {
+                    console.log(Math.floor(parseInt(e.target.id) / 10), Math.floor((parseInt(e.target.id) + (ships[selectedShip.shipId] - 1)) / 10))
+                    return Math.floor(parseInt(e.target.id) / 10) === Math.floor((parseInt(e.target.id) + (ships[selectedShip.shipId] - 1)) / 10)
+                }
+            }
+
+            const getCell = (i) => {
+                if (!direction) {
+                    return document.getElementById(parseInt(e.target.id) + 10 * i)
+                } else {
+                    return document.getElementById(parseInt(e.target.id) + i)
+                }
+            }
+
+
+            if (selectedShip.shipId) {
+                if (checkBorder()) {
+                    e.target.classList.toggle('taken')
+                    e.target.style.backgroundColor = colors[selectedShip.shipId]
+
+                    for (let i = 1; i < ships[selectedShip.shipId]; i++) {
+                        console.log(e.target.id)
+                        const cell = getCell(i)
+                        cell.classList.toggle('taken')
+                        cell.style.backgroundColor = colors[selectedShip.shipId]
+                    }
+
+                    const ship = document.querySelector(`.${selectedShip.shipId}`)
+                    ship.remove()
+
+                    selectedShip = {}
+                    readyShips += 1
+
+                    if (readyShips === 5) {
+                        playerReady()
+                    }
+                }
+
+            }
+        })
+    })
+
+    const playerReady = () => {
+        console.log('ready')
+        document.querySelector('.ship-grid').style.display = 'none'
+        document.querySelector('.control').style.display = 'none'
+
+        header.innerHTML = 'Ожидаем другого игрока'
+
+        let turn = 0
+
+        let gameEnd = 0
+        const enemyGridCells = document.querySelectorAll('.enemy-grid .cell')
+
+        // Player ready
+        socket.emit('playerReady');
+
+        socket.on('start', () => {
+            if (player === 1) {
+                header.innerHTML = 'Ваш ход'
+                playerGo()
+            } else {
+                header.innerHTML = 'Ход противника'
+            }
+        })
+
+        socket.on('getCell', id => {
+
+            const cell = document.getElementById(id)
+            const taken = cell.classList.contains('taken')
+            console.log(id, taken)
+            socket.emit('cellResponse', taken)
+
+            enemyGridCells.forEach(cell => {
+                cell.classList.remove('select')
+            })
+
+            if (taken) {
+                cell.classList.add('hit')
+            } else {
+                cell.classList.add('missed')
+                playerGo()
+            }
+        })
+
+        let targetTaken = 0
+        let currentTarget
+        let targetsHit = 0
+
+        socket.on('goResponse', cell => {
+            targetTaken = cell
+            console.log(targetTaken)
+
+            if (targetTaken) {
+                currentTarget.classList.add('hit')
+                targetsHit += 1
+                console.log('Targets hit:', targetsHit)
+
+                if (targetsHit === 19) {
+                    playerWon()
+                    return
+                }
+            } else {
+                currentTarget.classList.add('missed')
+            }
+
+            enemyGridCells.forEach(elem => {
+                elem.removeEventListener('click', onClick)
+            })
+
+            if (targetTaken) {
+                playerGo()
+            } else {
+                header.innerHTML = 'Ход противника'
+            }
+        })
+
+        const onClick = (e) => {
+            if (!e.target.classList.contains('hit') && !e.target.classList.contains('missed')) {
+
+                const id = parseInt(e.target.id.substring(6))
+                console.log(id)
+                currentTarget = e.target
+
+                socket.emit('playerGo', id)
+            }
+        }
+
+        const playerGo = () => {
+            header.innerHTML = 'Ваш ход'
+            console.log(player, 'go')
+
+            enemyGridCells.forEach(elem => {
+                elem.classList.add('select')
+                elem.addEventListener('click', onClick)
+            })
+        }
+
+        socket.on('playerLost', () => {
+            header.innerHTML = 'Вы проиграли'
+            
+            showLeaderboard()
+        })
+
+        const playerWon = () => {
+            header.innerHTML = 'Вы выиграли'
+            socket.emit('playerWon')
+
+            enemyGridCells.forEach(elem => {
+                elem.classList.remove('select')
+                elem.removeEventListener('click', onClick)
+            })
+
+            showLeaderboard()
+        }
+
+        const showLeaderboard = () => {
+            button.innerHTML = "Таблица лидеров"
+            button.removeEventListener('click', changeDirection)
+            button.addEventListener('click', (e) => {
+                window.location.href = '/leaderboard'
+            })
+            document.querySelector('.control').style.display = 'block'
+        }
+    }
+</script>
+
+<style>
+    *,
+    *::after,
+    *::before {
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1em;
+    }
+
+    .player-grid {
+        display: grid;
+        grid-template-columns: repeat(10, 3em);
+        grid-gap: 1px;
+    }
+
+    .player-grid .cell {
+        border: 1px solid;
+        width: 3em;
+        height: 3em;
+        border-radius: 0.3em;
+    }
+
+    .enemy-grid {
+        display: grid;
+        grid-template-columns: repeat(10, 3em);
+        grid-gap: 1px;
+    }
+
+    .enemy-grid .cell {
+        border: 1px solid;
+        width: 3em;
+        height: 3em;
+        border-radius: 0.3em;
+    }
+
+    .select {
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .select:hover {
+        background-color: rgb(223, 247, 255);
+    }
+
+    .board {
+        display: flex;
+        justify-content: center;
+        gap: 4em;
+    }
+
+    .ship-grid {
+        display: flex;
+        justify-content: space-around;
+        width: fit-content;
+        gap: 1em;
+        height: auto;
+        border: 1px solid;
+        border-radius: 0.3em;
+        padding: 1em;
+    }
+
+    .ship-grid .cell {
+        border: 1px solid;
+        width: 3em;
+        height: 3em;
+        border-radius: 0.3em;
+    }
+
+    .ship1,
+    .ship2,
+    .ship3,
+    .ship4,
+    .ship5 {
+        display: flex;
+        flex-direction: column;
+        width: fit-content;
+        height: fit-content;
+        gap: 1px;
+    }
+
+    .ship1 .cell {
+        background-color: #A4C5C6;
+    }
+
+    .ship2 .cell {
+        background-color: #FFE0AC;
+    }
+
+    .ship3 .cell {
+        background-color: #FFACB7;
+    }
+
+    .ship4 .cell {
+        background-color: #6886C5;
+    }
+
+    .ship5 .cell {
+        background-color: #D4EBD0;
+    }
+
+    .control {
+        display: flex;
+        justify-content: center;
+    }
+
+    .rotated {
+        flex-direction: row;
+    }
+
+    .glow {
+        box-shadow: 0px 0px 5px 3px rgba(69, 201, 255, 0.67), 0px 0px 5px 3px rgba(69, 201, 255, 0.67);
+    }
+
+    .hit {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .hit::before {
+        content: '';
+        display: inline-block;
+        width: 2em;
+        height: 2em;
+        border-radius: 1em;
+        background-color: #d56969;
+    }
+
+    .missed {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .missed::before {
+        content: '';
+        display: inline-block;
+        width: 2em;
+        height: 2em;
+        border-radius: 1em;
+        background-color: #94a1a7;
+    }
+</style>
+
+</html>

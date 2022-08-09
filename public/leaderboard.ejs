@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="content">
+        <a href="/">
+            <button>
+                Домой
+            </button>
+        </a>
+        <ul>
+            <% results.forEach(({ winner, duration }, idx)=> { %>
+                <li>
+                    <div>
+                        <p>Game #<%= idx + 1 %>
+                        </p>
+                        <p>Winner: <%= winner %>
+                        </p>
+                        <p>
+                            <%= duration %> seconds
+                        </p>
+                    </div>
+                </li>
+                <% }) %>
+        </ul>
+    </div>
+</body>
+
+<style>
+    *,
+    *::after,
+    *::before {
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3em;
+        margin: 3em auto;
+        width: 80%;
+    }
+
+    ul {
+        display: flex;
+        flex-direction: column;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        gap: 1em;
+        width: 100%;
+    }
+
+    li {
+        border: 1px solid;
+        padding: 2em 20em;
+    }
+
+    li div {
+        display: flex;
+        justify-content: space-around;
+    }
+</style>
+
+</html>
