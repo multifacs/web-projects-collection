@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Выдача</title>
+</head>
+
+<body>
+    <h1>
+        Возврат
+    </h1>
+    <div>
+        <label for="name"></label>
+        <input type="text" id="name">
+        <button id="search-btn">Поиск</button>
+    </div>
+    <div class="list">
+        <form action="" method="post">
+            <select name="entry" id="select" hidden>
+            </select>
+            <input type="submit" value="Вернуть">
+        </form>
+</body>
+<script>
+    const options = <%- JSON.stringify(rent) %>
+    const data = <%- JSON.stringify(data) %>
+
+    const button = document.getElementById('search-btn')
+    const name = document.getElementById('name')
+    const select = document.getElementById('select')
+    let filteredOptions = []
+    button.addEventListener('click', (e) => {
+        select.innerHTML = ''
+        if (name.value != '') {
+            filteredOptions = options.filter(x => x.name.toLowerCase().includes(name.value.toLowerCase()))
+        }
+        filteredOptions.forEach((book, idx) => {
+            const option = document.createElement('option')
+            option.value = idx
+            option.innerHTML = 'Имя: ' + book.name + ' Книга: ' + data[book.id].title
+            select.appendChild(option)
+        })
+        if (select.innerHTML !== '') {
+            select.hidden = false
+        }
+    })
+</script>
+<style>
+
+</style>
+</html>

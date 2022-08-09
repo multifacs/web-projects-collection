@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Библиотека</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="nav">
+    <h1>Библиотека</h1>
+    <a href="/return">
+      <button>Вернуть</button>
+    </a>
+  </div>
+  <div>
+    <label for="name"></label>
+    <input type="text" id="name">
+  </div>
+  <ul id="list"></ul>
+</body>
+<script>
+  const data = <%- JSON.stringify(data) %>
+
+  const name = document.getElementById('name')
+  const list = document.getElementById('list')
+
+  const fillList = (data) => {
+    list.innerHTML = ''
+    data.forEach((elem, idx) => {
+      const li = document.createElement('li')
+      const title = document.createElement('h2')
+
+      if (elem.quantity > 0) {
+        title.innerHTML = `<a href="/rent/${idx}">${elem.title}</a>`
+      } else {
+        title.innerHTML = `${elem.title} ( закончились )`
+      }
+      li.appendChild(title)
+
+      const authors = document.createElement('p')
+      li.appendChild(authors)
+
+      const info = document.createElement('div')
+      const pub = document.createElement('span')
+      pub.innerHTML = elem.publication
+      const pubCode = document.createElement('span')
+      pubCode.innerHTML = elem.pubCode
+      const isbn = document.createElement('span')
+      isbn.innerHTML = elem.ISBN
+      info.appendChild(pub)
+      info.appendChild(pubCode)
+      info.appendChild(isbn)
+      li.appendChild(info)
+
+      const qnt = document.createElement('h3')
+      qnt.innerHTML = elem.quantity
+      li.appendChild(qnt)
+
+      list.appendChild(li)
+    });
+  }
+
+  fillList(data)
+
+  name.addEventListener('input', (e) => {
+    const filteredOptions = data.filter(x => {
+      if (name.value == '') {
+        return true
+      } else if (
+        x.ISBN.toLowerCase().includes(name.value.toLowerCase()) ||
+        x.authors.toLowerCase().includes(name.value.toLowerCase()) ||
+        x.pubCode.toLowerCase().includes(name.value.toLowerCase()) ||
+        x.publication.toLowerCase().includes(name.value.toLowerCase()) ||
+        x.title.toLowerCase().includes(name.value.toLowerCase())
+      ) {
+        return true
+      } else {
+        return false
+      }
+    })
+    console.log(filteredOptions)
+    fillList(filteredOptions)
+  })
+
+
+</script>
+<style>
+  * {
+    box-sizing: border-box;
+    font-family: 'Montserrat';
+  }
+
+  .nav {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  ul {
+    list-style: none;
+  }
+
+  ul li {
+    border: 1px solid;
+  }
+</style>
+
+</html>

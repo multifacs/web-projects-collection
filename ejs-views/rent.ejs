@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Выдача</title>
+</head>
+
+<body>
+    <h1>
+        Выдача книги на 20 дней
+    </h1>
+    <div>
+
+        <article>
+            <h2>
+                <%= book.title %>
+            </h2>
+            <p>
+                <%= book.authors %>
+            </p>
+            <div>
+                <p>Издательство:</p>
+                <span>
+                    <%= book.publication %>
+                </span>
+                <p>
+                    Код издания:
+                </p>
+                <span>
+                    <%= book.pubCode %>
+                </span>
+                <p>
+                    ISBN:
+                </p>
+                <span>
+                    <%= book.ISBN %>
+                </span>
+            </div>
+        </article>
+    </div>
+    <p id="date"></p>
+    <form action="" method="post">
+        <label for="name">Ваше имя</label>
+        <input type="text" id="name" name="name">
+        <input type="submit" value="Отправить">
+    </form>
+</body>
+<script>
+    const dateLabel = document.getElementById('date')
+    const today = new Date()
+    const returnDate = new Date()
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
+    returnDate.setDate(today.getDate() + 20)
+    dateLabel.innerHTML = 'Книгу нужно будет вернуть до ' + returnDate.toLocaleDateString("en-US", options)
+</script>
+<style>
+
+</style>
+</html>
