@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>
+    <%= file %>
+  </title>
+</head>
+
+<body>
+
+
+  <div class="grid">
+    <div class="left">
+      <h1>Работа: <%= file %>
+      </h1>
+      <h2>Тип: <%= ext %>
+      </h2>
+      <form action="" method="post" enctype="multipart/form-data">
+        <%- include('./parts/stars.ejs') %>
+          <input type="text" name="comment" style="height: 100px; text-align: start;" required>
+          <input type="submit" value="Отправить" style="width: 150px">
+      </form>
+      <a href="/eval/<%= prev %>">Предыдущая</a>
+      <a href="/">Домой</a>
+      <a href="/eval/<%= next %>">Следующая</a>
+      <button onclick="showRates()">Показать оценки</button>
+      <ul id="list">
+        <% rates.forEach(({ rate, comment })=> { %>
+          <li>
+            <p>Оценка: <%= rate %>
+            </p>
+            <p>Комментарий: <%= comment %>
+            </p>
+          </li>
+          <% }) %>
+      </ul>
+    </div>
+    <div class="right">
+      <% if(ext==='jpg' || ext==='jpeg' || ext==='png' ) {%>
+        <%- include('./parts/img.ejs') %>
+          <% } %>
+            <% if(ext==='txt' ) {%>
+              <%- include('./parts/txt.ejs') %>
+                <% } %>
+                  <% if(ext==='pdf' ) {%>
+                    <%- include('./parts/pdf.ejs') %>
+                      <% } %>
+    </div>
+  </div>
+
+  <script>
+    const x = document.getElementById("list");
+    x.style.display = "none";
+
+    function showRates() {
+      
+      if (x.style.display === "none") {
+        x.style.display = "block";
+      } else {
+        x.style.display = "none";
+      }
+    }
+  </script>
+</body>
+
+<%- include('./parts/stars_css.ejs') %>
+
+  <style>
+    .grid {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .left {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .left form {
+      display: flex;
+      flex-direction: column;
+      gap: 1em;
+    }
+
+    .right {
+      margin: 0 auto;
+    }
+  </style>
+
+</html>
