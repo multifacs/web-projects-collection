@@ -1,6 +1,6 @@
 const express = require('express')
 const {
-	openDb,
+	newDB,
 } = require('./src/database')
 const routes = require('./src/routes')
 
@@ -13,7 +13,7 @@ const dbPath = './src/pizza-store.db'
 server.use(express.urlencoded({ extended: false }))
 
 const useDB = async (req, res, next) => {
-	req.db = await openDb(dbPath)
+	req.db = await newDB(dbPath)
 	next()
 }
 

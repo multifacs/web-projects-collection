@@ -1,11 +1,4 @@
 const express = require('express')
-const {
-	getAll,
-	getOne,
-	saveOrder,
-	saveFeedback,
-	getFeedbacks
-} = require('./database')
 const path = require('path')
 const pathToFile = (page) => {
 	// eslint-disable-next-line no-undef
@@ -14,14 +7,14 @@ const pathToFile = (page) => {
 const router = express.Router()
 
 router.get('/', async (req, res) => {
-	const pizzas = await getAll(req.db)
+	const pizzas = await req.db.getAll();
 	console.log(pizzas)
 	res.render(pathToFile('index'), { pizzas })
 })
 
 router.get('/order/:id', async (req, res) => {
 	const id = req.params.id
-	const pizza = await getOne(req.db, id)
+	const pizza = req.db.getOne(id)
 	res.render(pathToFile('order'), { pizza })
 })
 
@@ -36,7 +29,7 @@ router.post('/order/:id', async (req, res) => {
 	delete temp['tel']
 	order.dop = temp
 	
-	await saveOrder(req.db, order).then(() => {
+	await req.db.saveOrder(order).then(() => {
 		res.redirect('/feedback')
 	})
 })
@@ -49,12 +42,12 @@ router.post('/feedback', async (req, res) => {
 	const { name, text } = req.body
 	const feedback = { name, text }
 
-	await saveFeedback(req.db, feedback)
+	await req.db.saveFeedback(feedback)
 	res.redirect('/')
 })
 
 router.get('/feedbacks', async (req, res) => {
-	const feedbacks = await getFeedbacks(req.db)
+	const feedbacks = await req.db.getFeedbacks()
 	res.render(pathToFile('feedbacks'), { feedbacks })
 })
 
