@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Результаты игр</title>
+</head>
+
+<body>
+    <div>
+        <h1>Таблица результатов игр</h1>
+        <table>
+            <tr>
+                <th>№</th>
+                <th>Победитель</th>
+                <th>Продолжительность, сек</th>
+              </tr>
+            <% gameResults.forEach(({ winner, time }, idx)=> { %>
+                <tr>
+                    <td><%= idx + 1 %></td>
+                    <td>Игрок <%= winner %>
+                    </td>
+                    <td><%= time %>
+                    </td>
+                </tr>
+                <% }) %>
+        </table>
+    </div>
+</body>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Kelly+Slab&family=PT+Mono&display=swap');
+</style>
+<style>
+    div {
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+        margin: 200px 0;
+        align-items: center;
+    }
+
+    h1 {
+        font-size: 25pt;
+        font-family: 'Kelly Slab', cursive;
+    }
+
+    table {
+        font-family: 'PT Mono', monospace;
+        border-collapse: collapse;
+        width: 50%;
+    }
+
+    table td,
+    table th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    table tr:hover {
+        background-color: #ddd;
+    }
+
+    table th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #045faa;
+        color: white;
+    }
+</style>
+
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Игра</title>
+</head>
+
+<body>
+    <div class="content">
+        <h1></h1>
+        <div class="fields">
+            <div class="field1"></div>
+            <div class="field2"></div>
+        </div>
+    </div>
+</body>
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+    const socket = io();
+
+    let playerId = 0
+    socket.on('getUserId', id => {
+        playerId = id
+        document.title = `Игрок №${playerId}`
+
+        const info = document.getElementsByTagName('h1')[0]
+        const playerField = document.getElementsByClassName('field1')[0]
+        const enemyField = document.getElementsByClassName('field2')[0]
+
+        for (let i = 0; i < 100; i++) {
+            let field = document.createElement('div')
+            field.id = i
+            playerField.appendChild(field)
+
+            field = document.createElement('div')
+            field.id = i + 100
+            enemyField.appendChild(field)
+        }
+
+        for (let i = 0; i < 5; i++) {
+            const length = Math.round(Math.random() * (5 - 2) + 2);
+            const dir = Math.round(Math.random());
+            console.log(length, dir)
+            let canPlace = false;
+            let counter = 0;
+            let start = 0;
+            while (!canPlace) {
+                start = Math.round(Math.random() * 99);
+                console.log(start);
+
+                if (!dir) {
+                    if (Math.floor(start / 10) === Math.floor((start + length) / 10)) {
+                        canPlace = true;
+                    }
+                    for (let j = start - 11; j <= start - 11 + 3; j++) {
+                        for (let k = j; k <= j + length + 1; k++) {
+                            if (k >= 0 && k <= 99) {
+                                if (document.getElementById(k).classList.contains('ship')) {
+                                    canPlace = false;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (dir) {
+                    if (start + length * 10 < 100) {
+                        canPlace = true;
+                    }
+                    for (let j = start - 11; j <= start - 11 + length * 10; j += 10) {
+                        for (let k = j; k <= j + 2; k++) {
+                            if (k >= 0 && k <= 99) {
+                                if (document.getElementById(k).classList.contains('ship')) {
+                                    canPlace = false;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            for (let j = start; j < start + length * (dir ? 10 : 1); j += dir ? 10 : 1) {
+                document.getElementById(j).classList.add('ship')
+            }
+        }
+
+        let lastHit
+
+        const enemyGridFields = document.querySelectorAll('.field2 div')
+        enemyGridFields.forEach(elem => {
+            elem.addEventListener('click', (e) => {
+                if (info.innerHTML == 'Ваш ход') {
+                    console.log('ход')
+                    if (!e.target.classList.contains('hit') && !e.target.classList.contains('miss')) {
+                        const id = parseInt(e.target.id) - 100
+                        lastHit = e.target
+                        socket.emit('onPlayerMove', id)
+                    }
+                }
+            })
+        })
+
+        info.innerHTML = playerId === 1 ? 'Ваш ход' : 'Ход противника'
+
+        socket.on('getFieldId', id => {
+            const field = document.getElementById(id)
+            const isTaken = field.classList.contains('ship')
+
+            if (isTaken) {
+                field.classList.add('hit')
+            } else {
+                field.classList.add('miss')
+                info.innerHTML = 'Ваш ход'
+            }
+            if (!checkLose()) {
+                socket.emit('sendFieldId', isTaken)
+            }
+        })
+
+        socket.on('receiveFieldId', hasShip => {
+            if (hasShip) {
+                lastHit.classList.add('hit')
+            } else {
+                lastHit.classList.add('miss')
+            }
+            info.innerHTML = hasShip ? 'Ваш ход' : 'Ход противника'
+        })
+
+        const checkLose = () => {
+            let lost = true
+            for (let i = 0; i < 100; i++) {
+                const field = document.getElementById(i)
+                console.log(field)
+                if (field.classList.contains('ship')) {
+                    if (!field.classList.contains('hit')) {
+                        lost = false
+                    }
+                }
+            }
+            if (lost) {
+                info.innerHTML = 'Вы проиграли!'
+                socket.emit('onPlayerLost')
+                console.log('lost')
+
+                const a = document.createElement('a');
+                const linkText = document.createTextNode('Результаты');
+                a.appendChild(linkText);
+                a.title = 'Результаты';
+                a.href = '/scoreboard';
+                document.getElementsByClassName('content')[0].appendChild(a);
+            }
+            return lost
+        }
+
+        socket.on('onPlayerWin', () => {
+            info.innerHTML = 'Вы выиграли!'
+            lastHit.classList.add('hit')
+
+            const a = document.createElement('a');
+            const linkText = document.createTextNode('Результаты');
+            a.appendChild(linkText);
+            a.title = 'Результаты';
+            a.href = '/scoreboard';
+            document.getElementsByClassName('content')[0].appendChild(a);
+        })
+    });
+</script>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Kelly+Slab&family=PT+Mono&display=swap');
+</style>
+<style>
+    h1 {
+        font-size: 25pt;
+        font-family: 'Kelly Slab', cursive;
+        margin-top: 20px;
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 50px;
+    }
+
+    .fields {
+        display: flex;
+        justify-content: center;
+        gap: 50px;
+    }
+
+    .field1,
+    .field2 {
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+        gap: 5px;
+    }
+
+    .field1 div,
+    .field2 div {
+        border: 1px solid;
+        width: 50px;
+        height: 50px;
+        cursor: pointer;
+    }
+
+    .ship {
+        background-color: rgb(31, 128, 47);
+    }
+
+    .hit {
+        background-color: rgb(175, 37, 37);
+    }
+
+    .miss {
+        background-color: rgb(102, 102, 102);
+    }
+
+    a {
+        font-family: 'PT Mono', monospace;
+        outline: none;
+        text-decoration: none;
+        padding: 2px 1px 0;
+        background-color: rgb(0, 174, 255);
+        transition: all 0.3s ease-in-out;
+        width: 150px;
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+    }
+
+    a:link {
+        color: rgb(49, 49, 49);
+    }
+
+    a:focus,
+    a:hover {
+        background-color: rgb(0, 255, 115);
+    }
+
+    a:active {
+        color: red;
+    }
+</style>
+
+</html>
