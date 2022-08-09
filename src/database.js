@@ -1,9 +1,9 @@
 const sqlite3 = require('sqlite3')
 const { open } = require('sqlite')
 
-const openDb = async () => {
+const openDb = async (path) => {
 	return open({
-		filename: './pizza-store.db',
+		filename: path,
 		driver: sqlite3.Database
 	})
 }

@@ -1,2 +1,4 @@
 # web-projects-collection
-Лабы по ТСИ
+Сайт пиццерии
+
+Express, EJS, SQLite
