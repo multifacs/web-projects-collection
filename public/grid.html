@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Война вирусов</title>
+</head>
+
+<body>
+    <div class="left">
+        <h1 id="header"></h1>
+        <h1 id="move"></h1>
+    </div>
+    <div class="center">
+        <div class="container">
+            <div id="1">001</div>
+            <div id="2">002</div>
+            <div id="3">003</div>
+            <div id="4">004</div>
+            <div id="5">005</div>
+            <div id="6">006</div>
+            <div id="7">007</div>
+            <div id="8">008</div>
+            <div id="9">009</div>
+            <div id="10">010</div>
+            <div id="11">011</div>
+            <div id="12">012</div>
+            <div id="13">013</div>
+            <div id="14">014</div>
+            <div id="15">015</div>
+            <div id="16">016</div>
+            <div id="17">017</div>
+            <div id="18">018</div>
+            <div id="19">019</div>
+            <div id="20">020</div>
+            <div id="21">021</div>
+            <div id="22">022</div>
+            <div id="23">023</div>
+            <div id="24">024</div>
+            <div id="25">025</div>
+            <div id="26">026</div>
+            <div id="27">027</div>
+            <div id="28">028</div>
+            <div id="29">029</div>
+            <div id="30">030</div>
+            <div id="31">031</div>
+            <div id="32">032</div>
+            <div id="33">033</div>
+            <div id="34">034</div>
+            <div id="35">035</div>
+            <div id="36">036</div>
+            <div id="37">037</div>
+            <div id="38">038</div>
+            <div id="39">039</div>
+            <div id="40">040</div>
+            <div id="41">041</div>
+            <div id="42">042</div>
+            <div id="43">043</div>
+            <div id="44">044</div>
+            <div id="45">045</div>
+            <div id="46">046</div>
+            <div id="47">047</div>
+            <div id="48">048</div>
+            <div id="49">049</div>
+            <div id="50">050</div>
+            <div id="51">051</div>
+            <div id="52">052</div>
+            <div id="53">053</div>
+            <div id="54">054</div>
+            <div id="55">055</div>
+            <div id="56">056</div>
+            <div id="57">057</div>
+            <div id="58">058</div>
+            <div id="59">059</div>
+            <div id="60">060</div>
+            <div id="61">061</div>
+            <div id="62">062</div>
+            <div id="63">063</div>
+            <div id="64">064</div>
+            <div id="65">065</div>
+            <div id="66">066</div>
+            <div id="67">067</div>
+            <div id="68">068</div>
+            <div id="69">069</div>
+            <div id="70">070</div>
+            <div id="71">071</div>
+            <div id="72">072</div>
+            <div id="73">073</div>
+            <div id="74">074</div>
+            <div id="75">075</div>
+            <div id="76">076</div>
+            <div id="77">077</div>
+            <div id="78">078</div>
+            <div id="79">079</div>
+            <div id="80">080</div>
+            <div id="81">081</div>
+            <div id="82">082</div>
+            <div id="83">083</div>
+            <div id="84">084</div>
+            <div id="85">085</div>
+            <div id="86">086</div>
+            <div id="87">087</div>
+            <div id="88">088</div>
+            <div id="89">089</div>
+            <div id="90">090</div>
+            <div id="91">091</div>
+            <div id="92">092</div>
+            <div id="93">093</div>
+            <div id="94">094</div>
+            <div id="95">095</div>
+            <div id="96">096</div>
+            <div id="97">097</div>
+            <div id="98">098</div>
+            <div id="99">099</div>
+            <div id="100">100</div>
+        </div>
+        <button id="skip">
+            Пропустить ход
+        </button>
+    </div>
+    <div class="right">
+        <h1 id="score">Счёт</h1>
+        <h1 id="score-count">0</h1>
+    </div>
+</body>
+<style>
+    body {
+        display: grid;
+        margin: 100px 0;
+        grid-template-columns: 1fr 2fr 1fr;
+    }
+
+    .center {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        gap: 1em;
+    }
+
+    .left {
+        display: flex;
+        flex-direction: column;
+        align-items: end;
+    }
+
+    .right {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .container {
+        min-width: 500px;
+        min-height: 500px;
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(10, 1fr);
+    }
+
+    .container>div {
+        border: 1px solid;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 50px;
+        height: 50px;
+        cursor: pointer;
+        caret-color: transparent;
+    }
+</style>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="js/main.js"></script>
+
+</html>
