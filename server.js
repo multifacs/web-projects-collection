@@ -10,29 +10,18 @@ server.set('view engine', 'ejs')
 const SERVER_PORT = 3333
 const dbPath = './src/pizza-store.db'
 
-let db
-openDb(dbPath)
-	.then((res) => {
-		db = res
-		console.log('Connected to DB')
-
-		server.listen(SERVER_PORT, error => {
-			error ? console.log(error) : console.log(`Server running on ${SERVER_PORT}`)
-		})
-	})
-	.catch((err) => 
-		console.log('Caught error: ', err)
-	)
-
 server.use(express.urlencoded({ extended: false }))
 
-const useDB = (req, res, next) => {
-	req.db = db
+const useDB = async (req, res, next) => {
+	req.db = await openDb(dbPath)
 	next()
 }
 
 server.use(useDB)
 
-server.use(routes)
+server.listen(SERVER_PORT, error => {
+	error ? console.log(error) : console.log(`Server running on ${SERVER_PORT}`)
+})
 
+server.use(routes)
 server.use(express.static('./static/images'))
