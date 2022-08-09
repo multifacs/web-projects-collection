@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Показания счетчиков</title>
+</head>
+
+<body>
+  <nav>
+    <a href="/">
+      <button>
+        Домой
+      </button>
+    </a>
+  </nav>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+  const capitalize = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+
+  const data = <%- JSON.stringify(data) %>
+
+    console.log(data[0]._id)
+
+  data.forEach(element => {
+    delete element.__v
+    delete element.updatedAt
+
+    const form = document.createElement('form')
+    form.method = 'POST'
+    let fieldset = document.createElement('fieldset')
+    const legend = document.createElement('legend')
+    legend.innerHTML = capitalize(element.name) + ' #' + element._id
+    legend.addEventListener('click', (e) => {
+      window.location.href = `/data/${element._id}`
+    })
+    fieldset.appendChild(legend)
+    form.appendChild(fieldset)
+
+    for (const [key, value] of Object.entries(element)) {
+      if (key !== 'name' && key !== '_id') {
+        if (!Array.isArray(value)) {
+          let input = document.createElement('input')
+          input.name = key
+          input.value = value
+          input.id = key
+          input.required = true
+          input.disabled = true
+          let label = document.createElement('label')
+          label.for = key
+          label.innerHTML = capitalize(key)
+          fieldset.insertBefore(input, fieldset.firstChild)
+          fieldset.insertBefore(label, fieldset.firstChild)
+        } else {
+          value.forEach((entry, idx) => {
+            let inner_fieldset = document.createElement('fieldset')
+            for (const [inner_key, inner_value] of Object.entries(entry)) {
+              if (inner_key === 'name') {
+                const legend = document.createElement('legend')
+                legend.innerHTML = capitalize(inner_value)
+                inner_fieldset.appendChild(legend)
+              } else {
+                let input = document.createElement('input')
+                input.name = entry.name + '#' + inner_key
+                input.value = inner_value
+                input.id = inner_key
+                input.required = true
+                input.disabled = true
+                let label = document.createElement('label')
+                label.for = inner_key
+                label.innerHTML = capitalize(inner_key)
+                inner_fieldset.appendChild(label)
+                inner_fieldset.appendChild(input)
+              }
+            }
+            fieldset.appendChild(inner_fieldset)
+          })
+        }
+      }
+    }
+
+    document.body.appendChild(form)
+  });
+</script>
+
+<style>
+  *,
+  *::after,
+  *::before {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  nav {
+    display: flex;
+    justify-content: center;
+    gap: 1em;
+    margin: 2em 0;
+  }
+
+  form {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+    margin: 2em auto;
+  }
+
+  form legend {
+    cursor: pointer;
+  }
+
+  form fieldset {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2em;
+  }
+
+  form fieldset input {
+    width: 20%;
+  }
+
+  form fieldset fieldset input {
+    width: 50%;
+  }
+
+  form fieldset fieldset {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 40%;
+  }
+
+  form input[type="submit"] {
+    width: 30%;
+  }
+</style>
+
+</html>
